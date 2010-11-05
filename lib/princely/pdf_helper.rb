@@ -22,12 +22,17 @@ module PdfHelper
     options[:stylesheets] ||= []
     options[:layout] ||= false
     options[:template] ||= File.join(controller_path,action_name)
-    
+    options[:html_string] ||= false
+
     prince = Princely.new()
     # Sets style sheets on PDF renderer
     prince.add_style_sheets(*options[:stylesheets].collect{|style| stylesheet_file_path(style)})
-    
-    html_string = render_to_string(:template => options[:template], :layout => options[:layout])
+      
+    if (options[:html_string])
+      html_string = options[:html_string]
+    else
+      html_string = render_to_string(:template => options[:template], :layout => options[:layout])
+    end
     
     # Make all paths relative, on disk paths...
     html_string.gsub!(".com:/",".com/") # strip out bad attachment_fu URLs
